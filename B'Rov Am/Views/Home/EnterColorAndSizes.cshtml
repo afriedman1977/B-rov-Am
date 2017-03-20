@@ -1,0 +1,84 @@
+﻿@using B_Rov_Am.Models;
+@using BRovAm.data;
+@model EnterColorAndSizesViewModel
+
+
+<div style="text-align:center"><h3>Enter info For @Model.CurrentProduct.StyleNumber</h3></div>
+<input type="hidden" id="size-count" value="@Model.AllSizes.Count" />
+<input type="hidden" id="product-id" value="@Model.CurrentProduct.Id"/>
+<form method="POST" action="/Home/SubmitColorAndSizes" >
+    <div class="form-inline row">
+        <div class="col-md-3 col-md-offset-2"><span>Choose a Color</span></div>
+        <div class="col-md-4">
+            <label for="color">Color</label>
+            <select name="color" id="color" onchange="window.location = 'http://localhost:61870/Home/EnterColorAndSizes?id='+ @Model.CurrentProduct.Id +'&colorid='+this.value;">
+                @foreach (Color c in Model.AllColors)
+                {
+                    if (Model.ColorId == c.ColorId)
+                    {
+                        <option value="@c.ColorId" data-color-id="@c.ColorId" selected>@c.ProductColor</option>
+                    }
+                    else
+                    {
+                        <option value="@c.ColorId" data-color-id="@c.ColorId">@c.ProductColor</option>
+                    }
+
+                }
+            </select>
+        </div>
+    </div>
+    <div style="text-align:center"><p>Choose Sizes</p></div>
+    <div id="size-div">
+        <div class="row" id="choose-sizes">
+            @for (int x = 0; x < Model.AllSizes.Count; x++)
+        {
+            if (Model.CollorsSizesForproduct.Any(c => c.SizeId == Model.AllSizes[x].SizeId && c.ColorId == Model.ColorId))
+            {
+                <div class="col-md-2">
+                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.Id" />
+                    <input type="hidden" name="pcs[@x].colorId" id="color-id-@x" value="" />
+                    <input type="hidden" name="pcs[@x].sizeId" value="@Model.AllSizes[x].SizeId" />
+
+                    @{
+                Model.CurrentproductColorsize = Model.CollorsSizesForproduct.First(c => c.SizeId == Model.AllSizes[x].SizeId && c.ColorId == Model.ColorId);
+                    }
+
+                    <input type="checkbox" name="pcs[@x].included" value="true" checked />@Model.AllSizes[x].ProductSize<span>-------------------</span>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="input-sm" name="pcs[@x].quantity" value="@Model.CurrentproductColorsize.Quantity">
+                </div>
+            }
+
+            else
+            {
+                <div class="col-md-2">
+                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.Id" />
+                    <input type="hidden" name="pcs[@x].colorId" id="color-id-@x" value="" />
+                    <input type="hidden" name="pcs[@x].sizeId" value="@Model.AllSizes[x].SizeId" />
+                    <input type="checkbox" name="pcs[@x].included" value="true" /> @Model.AllSizes[x].ProductSize<span>-------------------</span>
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="input-sm" name="pcs[@x].quantity" placeholder="Quantity">
+                </div>
+            }
+            if ((x + 1) % 2 == 0)
+            {
+                <div class="col-md-12">
+
+                    <hr />
+                </div>
+            }
+        }
+        </div>
+    </div>
+    <div class="row" style="margin:30px">
+        <div class="col-md-4 col-md-offset-4">
+            <button class="btn btn-primary btn-block">Submit</button>
+        </div>
+    </div>
+</form>
+@section scripts{
+    <script src="~/Scripts/EnterColorAndSizes.js"></script>
+}

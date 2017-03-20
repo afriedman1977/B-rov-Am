@@ -1,0 +1,20 @@
+﻿@using B_Rov_Am.Models;
+@using BRovAm.data;
+@model DetailsViewModel
+
+<div style="margin:20px;text-align:center"><h1>Details For @Model.CurrentProduct.StyleNumber</h1></div>
+<table class="table table-bordered table-striped table-hover">
+    <tr>
+        <th>Color</th>
+        <th>Size</th>
+        <th>Quantity</th>
+    </tr>
+    @foreach(ColorSizeQuantity csq in Model.DetailsForProduct)
+    {
+        <tr>
+            <td>@csq.Color</td>
+            <td>@csq.Size</td>
+            <td>@csq.Quantity</td>
+        </tr>
+    }
+</table>

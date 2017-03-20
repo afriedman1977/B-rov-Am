@@ -1,0 +1,5 @@
+c:\users\pessie\documents\visual studio 2013\Projects\B'Rov Am\BRovAm.data\obj\Debug\BRovAm.data.csprojResolveAssemblyReference.cache
+C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\BRovAm.data\bin\Debug\BRovAm.data.dll
+C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\BRovAm.data\bin\Debug\BRovAm.data.pdb
+C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\BRovAm.data\obj\Debug\BRovAm.data.dll
+C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\BRovAm.data\obj\Debug\BRovAm.data.pdb
