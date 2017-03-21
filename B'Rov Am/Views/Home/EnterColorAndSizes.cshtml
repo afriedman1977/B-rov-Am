@@ -5,13 +5,13 @@
 
 <div style="text-align:center"><h3>Enter info For @Model.CurrentProduct.StyleNumber</h3></div>
 <input type="hidden" id="size-count" value="@Model.AllSizes.Count" />
-<input type="hidden" id="product-id" value="@Model.CurrentProduct.Id"/>
+<input type="hidden" id="product-id" value="@Model.CurrentProduct.ProductId"/>
 <form method="POST" action="/Home/SubmitColorAndSizes" >
     <div class="form-inline row">
         <div class="col-md-3 col-md-offset-2"><span>Choose a Color</span></div>
         <div class="col-md-4">
             <label for="color">Color</label>
-            <select name="color" id="color" onchange="window.location = 'http://localhost:61870/Home/EnterColorAndSizes?id='+ @Model.CurrentProduct.Id +'&colorid='+this.value;">
+            <select name="color" id="color" onchange="window.location = 'http://localhost:61870/Home/EnterColorAndSizes?id='+ @Model.CurrentProduct.ProductId +'&colorid='+this.value;">
                 @foreach (Color c in Model.AllColors)
                 {
                     if (Model.ColorId == c.ColorId)
@@ -35,7 +35,7 @@
             if (Model.CollorsSizesForproduct.Any(c => c.SizeId == Model.AllSizes[x].SizeId && c.ColorId == Model.ColorId))
             {
                 <div class="col-md-2">
-                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.Id" />
+                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.ProductId" />
                     <input type="hidden" name="pcs[@x].colorId" id="color-id-@x" value="" />
                     <input type="hidden" name="pcs[@x].sizeId" value="@Model.AllSizes[x].SizeId" />
 
@@ -53,7 +53,7 @@
             else
             {
                 <div class="col-md-2">
-                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.Id" />
+                    <input type="hidden" name="pcs[@x].productId" value="@Model.CurrentProduct.ProductId" />
                     <input type="hidden" name="pcs[@x].colorId" id="color-id-@x" value="" />
                     <input type="hidden" name="pcs[@x].sizeId" value="@Model.AllSizes[x].SizeId" />
                     <input type="checkbox" name="pcs[@x].included" value="true" /> @Model.AllSizes[x].ProductSize<span>-------------------</span>

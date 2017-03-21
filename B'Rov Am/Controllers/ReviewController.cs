@@ -551,16 +551,16 @@ namespace B_Rov_Am.Controllers
         }
 
         [HttpPost]
-        public TwiMLResult EditSize()
+        public TwiMLResult EditSize1()
         {
             var response = new TwilioResponse();
-            response.BeginGather(new { action = "/Review/ReviewSize", numDigits = "1" })
+            response.BeginGather(new { action = "/Review/ReviewSize1", numDigits = "1" })
                     .Say("Please enter a size code", new { voice = "alice", language = "en-US" })
                     .EndGather();
             return TwiML(response);
         }
 
-        public TwiMLResult ReviewSize(string digits)
+        public TwiMLResult ReviewSize1(string digits)
         {
             var response = new TwilioResponse();
             BRovAmManager manager = new BRovAmManager(Properties.Settings.Default.constr);

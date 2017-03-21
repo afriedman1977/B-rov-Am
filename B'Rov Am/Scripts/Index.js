@@ -13,10 +13,10 @@
             $("#brand").val(result.Brand);
             $("#description").val(result.Description);
             $("#price").val(result.Price);
-            $("#product-id").val(result.Id);
+            $("#product-id").val(result.ProductId);
             var x = $("#product-id").val();
             console.log("product id" + x);
-            console.log("result id" + result.Id);
+            //console.log("result id" + result.Id);
             $('#category').val(result.CategoryId).change();
             $("#submit-add").hide();
             $("#submit-edit").show();

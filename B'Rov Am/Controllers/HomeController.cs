@@ -23,8 +23,8 @@ namespace B_Rov_Am.Controllers
                 ivm.AllProducts.Add(new ProductModel
                 {
                     Product = p,
-                    Colors = manager.GetColorForProduct(p.Id),
-                    Sizes = manager.GetSizesForProduct(p.Id)
+                    Colors = manager.GetColorForProduct(p.ProductId),
+                    Sizes = manager.GetSizesForProduct(p.ProductId)
                 });
             }            
             ivm.AllCategories = manager.GetAllCategories();
@@ -79,7 +79,7 @@ namespace B_Rov_Am.Controllers
         {
             BRovAmManager manager = new BRovAmManager(Properties.Settings.Default.constr);
             manager.EditProduct(p);
-            return Redirect("/Home/EnterColorAndSizes?id=" + p.Id);
+            return Redirect("/Home/EnterColorAndSizes?id=" + p.ProductId);
         }
 
         public ActionResult GetDetails(int id)

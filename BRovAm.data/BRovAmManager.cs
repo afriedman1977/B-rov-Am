@@ -220,7 +220,7 @@ namespace BRovAm.data
                 reader.Read();
                 return new Product
                 {
-                    ProductId = (int)reader["ProductID"],
+                    ProductId = (int)reader["ProductId"],
                     StyleNumber = (string)reader["StyleNumber"],
                     Brand = (string)reader["Brand"],
                     Description = (string)reader["Description"],
@@ -275,7 +275,7 @@ namespace BRovAm.data
                 command.Parameters.AddWithValue("@description", p.Description);
                 command.Parameters.AddWithValue("@price", p.Price);
                 command.Parameters.AddWithValue("@cId", p.CategoryId);
-                command.Parameters.AddWithValue("@id", p.Id);
+                command.Parameters.AddWithValue("@id", p.ProductId);
                 connection.Open();
                 command.ExecuteNonQuery();
             }

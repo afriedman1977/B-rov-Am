@@ -20,7 +20,7 @@
     </tr>
     @foreach (ProductModel pm in Model.AllProducts)
     {
-        <tr data-product-id="@pm.Product.Id">
+        <tr data-product-id="@pm.Product.ProductId">
             <td>@pm.Product.StyleNumber</td>
             <td>@pm.Product.Brand</td>
             <td>@pm.Product.Description</td>
@@ -44,11 +44,11 @@
                         <button class="btn btn-sm btn-warning edit">Edit</button>
                     </div>
                     <div class="col-md-1 col-md-offset-1">
-                        <a href="/Home/GetDetails?id=@pm.Product.Id" class="btn btn-sm btn-info details">Details</a>
+                        <a href="/Home/GetDetails?id=@pm.Product.ProductId" class="btn btn-sm btn-info details">Details</a>
                     </div>
                     <div class="col-md-1 col-md-offset-2">
                         <form action="/Home/DeleteProduct" method="POST" id="delete-form">
-                            <input type="hidden" name="id" value="@pm.Product.Id"/>
+                            <input type="hidden" name="id" value="@pm.Product.ProductId"/>
                             <button class="btn btn-sm btn-danger delete">Delete</button>
                         </form>
                     </div>
@@ -87,7 +87,7 @@
                         <label for="price">Price</label>
                         <input type="text" class="form-control" name="price" id="price" placeholder="Price">
                     </div> 
-                    <input type="hidden" id="product-id" value="" name="Id"/>                  
+                    <input type="hidden" id="product-id" value="" name="ProductId"/>                  
                     <div class="form-inline row">
                         <div class="form-group col-md-4">
                             <label for="category">Category</label>
