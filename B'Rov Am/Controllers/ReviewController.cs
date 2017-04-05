@@ -85,7 +85,8 @@ namespace B_Rov_Am.Controllers
             _index = 0;
             var response = new TwilioResponse();
             response.BeginGather(new { action = "/Review/ReviewChoice", numDigits = 1 })
-                .Say("To review your entire order press 1, to review a specific item in your order press 2, to return to the main menu press 3.", new { voice = "alice", language = "en-US" })
+                .Say("To review your entire order press 1, to review a specific item in your order press 2, to add an item to your order press 3,"
+                + " to return to the main menu press 4.", new { voice = "alice", language = "en-US" })
                 .EndGather();
             response.Redirect("/Review/ReviewOptions");
             return TwiML(response);
@@ -104,6 +105,10 @@ namespace B_Rov_Am.Controllers
                 response.Redirect("/Review/EnterDetail");
             }
             else if (digits == "3")
+            {
+                response.Redirect("/Sales/ChooseItem");
+            }
+            else if (digits == "4")
             {
                 response.Redirect("/Sales/Welcome");
             }
@@ -218,7 +223,7 @@ namespace B_Rov_Am.Controllers
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
                 response.Redirect("/Review/EditColor");
             }
-            else if(digits == "4")
+            else if (digits == "4")
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);

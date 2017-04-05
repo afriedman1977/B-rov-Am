@@ -11,7 +11,7 @@
         <div class="col-md-3 col-md-offset-2"><span>Choose a Color</span></div>
         <div class="col-md-4">
             <label for="color">Color</label>
-            <select name="color" id="color" onchange="window.location = 'http://localhost:61870/Home/EnterColorAndSizes?id='+ @Model.CurrentProduct.ProductId +'&colorid='+this.value;">
+            <select name="color" id="color" onchange="window.location = 'http://localhost:6780/Home/EnterColorAndSizes?id='+ @Model.CurrentProduct.ProductId +'&colorid='+this.value;">
                 @foreach (Color c in Model.AllColors)
                 {
                     if (Model.ColorId == c.ColorId)

@@ -21,11 +21,6 @@ namespace B_Rov_Am.Controllers
             return View();
         }
 
-        public void AddCustomer()
-        {
-
-        }
-
         [HttpPost]
         public TwiMLResult Welcome()
         {
@@ -43,19 +38,10 @@ namespace B_Rov_Am.Controllers
         public TwiMLResult Menu(string digits, string From)
         {
             var selectedOption = digits;
-            //var optionActions = new Dictionary<string, Func<TwiMLResult>>()
-            //{
-            //    {"1", ChooseItem},
-            //    //{"2", ReviewOrder}
-            //};
-
-            //return optionActions.ContainsKey(selectedOption) ?
-            //return  optionActions[selectedOption]();
-            //RedirectWelcome();
+            
             if (selectedOption == "1")
             {
-                // return GetCustomer(From);
-               return TwiML(new TwilioResponse().Redirect("/Sales/GetCustomer"));
+                return TwiML(new TwilioResponse().Redirect("/Sales/GetCustomer"));
             }
             else if (selectedOption == "2")
             {
@@ -74,21 +60,24 @@ namespace B_Rov_Am.Controllers
                 Customer customer = manager.GetAllCustomers().Where(c => c.PhoneNumber == From.Substring(2)).FirstOrDefault();
                 if (customer != null)
                 {
-                    Session["orderId"] = manager.CreateOrder(customer.CustomerID);
-                    return ChooseItem();
+                    ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
+                    Order order = REManager.GetAllOrders().Where(o => o.CustomerID == customer.CustomerID).FirstOrDefault();
+                    if (order != null)
+                    {
+                        response.Say("we found an order associated with this phone number, you will now be redirected to the review option");
+                        Session["customerId"] = customer.CustomerID;
+                        Session["orderId"] = order.OrderID;
+                        response.Redirect("/Review/ReviewOptions");
+                        return TwiML(response);
+                    }
+                    else
+                    {
+                        Session["orderId"] = manager.CreateOrder(customer.CustomerID);
+                        return ChooseItem();
+                    }
                 }
                 else
                 {
-                    //customer = new Customer
-                    //{
-                    //    FirstName = "x",
-                    //    LastNmae = "x",
-                    //    Address = "x",
-                    //    PhoneNumber = From.Substring(2)
-                    //};
-                    //int cId = manager.AddCustomer(customer);
-                    //Session["orderId"] = manager.CreateOrder(cId);
-                    //return ChooseItem();
                     response.Redirect("/Sales/VerifyCustomer?phoneNumber=" + From.Substring(2) + "&digits=1");
                     return TwiML(response);
                 }
@@ -129,24 +118,39 @@ namespace B_Rov_Am.Controllers
                 return TwiML(response.Redirect("/Sales/GetCustomer"));
             }
 
-            //SalesManager manager = new SalesManager(Properties.Settings.Default.constr);
-            //Customer customer = manager.GetAllCustomers().Where(c => c.PhoneNumber == phoneNumber).FirstOrDefault();
-            //if (customer != null)
-            //{
-            //    Session["orderId"] = manager.CreateOrder(customer.CustomerID);
-            //    return ChooseItem();
-            //}
             else if (digits == "1")
             {
-                response.Say("Please record your name and address after the beep. press the pound key when you are done", new { voice = "alice", language = "en-GB", timeout = "100" });
-                response.Record(new { action = "/Sales/CaptureRecording?phoneNumber=" + phoneNumber, method = "GET", finishOnKey = "#" });
-                return TwiML(response);
+                SalesManager manager = new SalesManager(Properties.Settings.Default.constr);
+                Customer customer = manager.GetAllCustomers().Where(c => c.PhoneNumber == phoneNumber).FirstOrDefault();
+                if (customer != null)
+                {
+                    ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
+                    Order order = REManager.GetAllOrders().Where(o => o.CustomerID == customer.CustomerID).FirstOrDefault();
+                    if (order != null)
+                    {
+                        response.Say("we found an order associated with this phone number, you will now be redirected to the review option");
+                        Session["customerId"] = customer.CustomerID;
+                        Session["orderId"] = order.OrderID;
+                        response.Redirect("/Review/ReviewOptions");
+                        return TwiML(response);
+                    }
+                    else
+                    {
+                        Session["orderId"] = manager.CreateOrder(customer.CustomerID);
+                        return ChooseItem();
+                    }
+                }
+                else
+                {
+                    response.Say("Please record your name and address after the beep. press the pound key when you are done", new { voice = "alice", language = "en-GB", timeout = "100" });
+                    response.Record(new { action = "/Sales/CaptureRecording?phoneNumber=" + phoneNumber, method = "GET", finishOnKey = "#" });
+                    return TwiML(response);
+                }
             }
             else
             {
                 return TwiML(response.Say("Invalid choice").Redirect("/Sales/VerifyNumber?digits=" + phoneNumber));
             }
-            // return GetCustomer();
         }
 
         [HttpGet]
@@ -175,11 +179,5 @@ namespace B_Rov_Am.Controllers
             response.Redirect("/Sales/ChooseItem");
             return TwiML(response);
         }
-
-        //private static TwiMLResult ReviewOrder()
-        //{
-        //    var response = new TwilioResponse();
-        //    return TwiML(response);
-        //}
     }
 }
