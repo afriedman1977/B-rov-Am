@@ -98,6 +98,7 @@ namespace B_Rov_Am.Controllers
                 response.BeginGather(new { action = Url.Action("VerifyNumber", "Sales"), numDigits = "10" })
                     .Say("Please enter your 10 digit Phone Number", new { voice = "alice", language = "en-GB", timeout = "5" })
                     .EndGather();
+                response.Redirect("/Sales/GetCustomer");
                 return TwiML(response);
             }
         }
@@ -143,7 +144,7 @@ namespace B_Rov_Am.Controllers
             }
             else
             {
-                return TwiML(response.Say("Invalid choice").Redirect("/Sales/VerifyNumber"));
+                return TwiML(response.Say("Invalid choice").Redirect("/Sales/VerifyNumber?digits=" + phoneNumber));
             }
             // return GetCustomer();
         }
@@ -171,6 +172,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = Url.Action("Choose", "Items"), numDigits = "3" })
                 .Say("Please enter an item code.", new { voice = "alice", language = "en-GB", timeout = "100" })
                 .EndGather();
+            response.Redirect("/Sales/ChooseItem");
             return TwiML(response);
         }
 

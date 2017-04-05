@@ -31,6 +31,7 @@ namespace B_Rov_Am.Controllers
                 response.BeginGather(new { action = "/Review/FindOrder", numDigits = "10" })
                     .Say("Please enter your 10 digit phone number", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/SearchForOrder");
             }
             else
             {
@@ -54,6 +55,7 @@ namespace B_Rov_Am.Controllers
                     .Say("We couldn't find an order associated with your phone number. To search with a different phone number press 1, "
                     + " to go to the main menu press 2.", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/FindOrder?digits=" + digits);
             }
             else
             {
@@ -69,7 +71,7 @@ namespace B_Rov_Am.Controllers
             var response = new TwilioResponse();
             if (digits == "1")
             {
-                response.Redirect("/Review/SearchForOrder?From=null");
+                response.Redirect("/Review/SearchForOrder?From=" + null);
             }
             else
             {
@@ -85,6 +87,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewChoice", numDigits = 1 })
                 .Say("To review your entire order press 1, to review a specific item in your order press 2, to return to the main menu press 3.", new { voice = "alice", language = "en-US" })
                 .EndGather();
+            response.Redirect("/Review/ReviewOptions");
             return TwiML(response);
 
         }
@@ -129,6 +132,7 @@ namespace B_Rov_Am.Controllers
                 + "press 4, to hear the next item in your cart press 5, to return to the previous menu press 6, to return to "
                 + "the main menu press 7.", new { voice = "alice", language = "en-US" })
                 .EndGather();
+            response.Redirect("/Review/ReviewEntireOrder");
             return TwiML(response);
         }
 
@@ -165,6 +169,11 @@ namespace B_Rov_Am.Controllers
             {
                 response.Redirect("/Sales/Welcome");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewEntireOrder");
+            }
             return TwiML(response);
         }
 
@@ -174,6 +183,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewQuantity", numDigits = "2" })
                     .Say("Please enter a quantity", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditQuantity");
             return TwiML(response);
         }
 
@@ -184,6 +194,7 @@ namespace B_Rov_Am.Controllers
                 .Say("you have chosen to update the quantity to, " + digits + " , to enter the quantity again, press 1. to confirm and review the next item in your cart "
                 + "press 2. to confirm and change the color of your item press 3. to confirm and change the size of your item press 4.", new { voice = "alice", language = "en-US" })
                 .EndGather();
+            response.Redirect("/Review/ReviewQuantity?digits=" + digits);
             return TwiML(response);
         }
 
@@ -207,6 +218,17 @@ namespace B_Rov_Am.Controllers
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
                 response.Redirect("/Review/EditColor");
             }
+            else if(digits == "4")
+            {
+                ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
+                REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
+                response.Redirect("/Review/EditSize");
+            }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewQuantity?digits=" + qty.ToString());
+            }
             return TwiML(response);
         }
 
@@ -216,6 +238,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewColor", numDigits = "1" })
                     .Say("Please enter a color code", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditColor");
             return TwiML(response);
         }
 
@@ -243,6 +266,7 @@ namespace B_Rov_Am.Controllers
                     .Say("you have chosen to update the color to, " + color.ProductColor + " , to enter the color again, press 1. to confirm and review the next item in your cart "
                     + "press 2. to confirm and change the size of your item press 3.", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/ReviewColor?digits=" + digits);
             }
             return TwiML(response);
         }
@@ -267,6 +291,11 @@ namespace B_Rov_Am.Controllers
                 REManager.UpdateColor(colorCode, (int)Session["OrderDetailID"]);
                 response.Redirect("/Review/EditSize");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewColor?digits=" + colorCode.ToString());
+            }
             return TwiML(response);
         }
 
@@ -276,6 +305,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewSize", numDigits = "1" })
                     .Say("Please enter a size code", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditSize");
             return TwiML(response);
         }
 
@@ -303,6 +333,7 @@ namespace B_Rov_Am.Controllers
                     .Say("you have chosen to update the size to, " + size.ProductSize + " , to enter the size again, press 1. to confirm and review the next item in your cart "
                     + "press 2.", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/ReviewSize?digits=" + digits);
             }
             return TwiML(response);
         }
@@ -321,6 +352,11 @@ namespace B_Rov_Am.Controllers
                 _index++;
                 response.Redirect("/Review/ReviewEntireOrder");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewSize?digits=" + sizeCode.ToString());
+            }
             return TwiML(response);
         }
 
@@ -331,6 +367,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/FindDetail", numDigits = "3" })
                .Say("please enter the item code of the item you want to edit.", new { voice = "alice", language = "en-US" })
                .EndGather();
+            response.Redirect("Review/EnterDetail");
             return TwiML(response);
         }
 
@@ -351,6 +388,11 @@ namespace B_Rov_Am.Controllers
                     .Say("we found multiple of that item in your order, to narrow it down please enter the size code of the item you want to edit", new { voice = "alice", language = "en-US" })
                     .EndGather();
             }
+            else
+            {
+                Session["OrderDetailID"] = details[0].OrderDetailID;
+                response.Redirect("/Review/ReviewDetail");
+            }
             return TwiML(response);
         }
 
@@ -370,6 +412,11 @@ namespace B_Rov_Am.Controllers
                 response.BeginGather(new { action = "/Review/FindByColor?productCode=" + productCode + "&sizeCode=" + int.Parse(digits), numDigits = "2" })
                     .Say("we found multiple of that item in that size in your order, to narrow it down please enter the color code of the item you want to edit", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            }
+            else
+            {
+                Session["OrderDetailID"] = details[0].OrderDetailID;
+                response.Redirect("/Review/ReviewDetail");
             }
             return TwiML(response);
         }
@@ -409,6 +456,7 @@ namespace B_Rov_Am.Controllers
                 + "press 4, to return to the previous menu press 5, to return to "
                 + "the main menu press 6.", new { voice = "alice", language = "en-US" })
                 .EndGather();
+            response.Redirect("/Review/ReviewDetail");
             return TwiML(response);
         }
 
@@ -441,6 +489,11 @@ namespace B_Rov_Am.Controllers
             {
                 response.Redirect("/Sales/Welcome");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewDetail");
+            }
             return TwiML(response);
         }
 
@@ -451,6 +504,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewQuantity1", numDigits = "2" })
                     .Say("Please enter a quantity", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditQuantity1");
             return TwiML(response);
         }
 
@@ -461,6 +515,7 @@ namespace B_Rov_Am.Controllers
                 .Say("you have chosen to update the quantity to, " + digits + " , to enter the quantity again, press 1. to confirm and not make any more changes to this item "
                 + "press 2. to confirm and change the color of your item press 3. to confirm and change the size of your item press 4.", new { voice = "alice", language = "en-US" })
                 .EndGather();
+            response.Redirect("/Review/ReviewQuantity1?digits=" + digits);
             return TwiML(response);
         }
 
@@ -485,6 +540,11 @@ namespace B_Rov_Am.Controllers
                 response.Say("Quantity successfully updated.");
                 response.Redirect("/Review/EditColor1");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewQuantity1?digits=" + qty.ToString());
+            }
             return TwiML(response);
         }
 
@@ -495,6 +555,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewColor1", numDigits = "1" })
                     .Say("Please enter a color code", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditColor1");
             return TwiML(response);
         }
 
@@ -522,6 +583,7 @@ namespace B_Rov_Am.Controllers
                     .Say("you have chosen to update the color to, " + color.ProductColor + " , to enter the color again, press 1. to confirm and not make any more changes to this item "
                     + "press 2. to confirm and change the size of your item press 3.", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/ReviewColor1?digits=" + digits);
             }
             return TwiML(response);
         }
@@ -547,6 +609,11 @@ namespace B_Rov_Am.Controllers
                 response.Say("Color successfully updated.");
                 response.Redirect("/Review/EditSize1");
             }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewColor1?digits=" + colorCode.ToString());
+            }
             return TwiML(response);
         }
 
@@ -557,6 +624,7 @@ namespace B_Rov_Am.Controllers
             response.BeginGather(new { action = "/Review/ReviewSize1", numDigits = "1" })
                     .Say("Please enter a size code", new { voice = "alice", language = "en-US" })
                     .EndGather();
+            response.Redirect("/Review/EditSize1");
             return TwiML(response);
         }
 
@@ -584,6 +652,7 @@ namespace B_Rov_Am.Controllers
                     .Say("you have chosen to update the size to, " + size.ProductSize + " , to enter the size again, press 1. to confirm "
                     + "press 2.", new { voice = "alice", language = "en-US" })
                     .EndGather();
+                response.Redirect("/Review/ReviewSize1?digits=" + digits);
             }
             return TwiML(response);
         }
@@ -601,6 +670,11 @@ namespace B_Rov_Am.Controllers
                 REManager.UpdateSize(sizeCode, (int)Session["OrderDetailID"]);
                 response.Say("Size successfully updated.");
                 response.Redirect("/Review/ReviewOptions");
+            }
+            else
+            {
+                response.Say("Invalid choice");
+                response.Redirect("/Review/ReviewSize1?digits=" + sizeCode.ToString());
             }
             return TwiML(response);
         }
