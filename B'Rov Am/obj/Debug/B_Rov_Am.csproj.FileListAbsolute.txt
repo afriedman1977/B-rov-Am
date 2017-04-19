@@ -34,3 +34,4 @@ C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\bin\Twil
 C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\bin\Twilio.Mvc.xml
 C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\bin\Twilio.Twiml.pdb
 C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\bin\Twilio.Twiml.xml
+C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\bin\Rotativa.dll

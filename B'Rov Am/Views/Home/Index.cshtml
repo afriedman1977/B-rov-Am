@@ -7,7 +7,7 @@
         <button class="btn btn-primary btn-block" id="add-product">Add Product</button>
     </div>
 </div>
-<table class="table table-bordered table-striped table-bordered">
+<table class="table table-bordered table-striped table-hover">
     <tr>
         <th>Style No.</th>
         <th>Brand</th>
@@ -16,7 +16,7 @@
         <th>Sizes</th>
         <th>Price</th>
         <th>Actions</th>
-        <th></th>
+        
     </tr>
     @foreach (ProductModel pm in Model.AllProducts)
     {
@@ -54,9 +54,9 @@
                     </div>
                 </div>
             </td>
-            <td>
+            @*<td>
                 <button class="btn btn-default  listen" value='🔊 Play'>🔊</button>
-            </td>
+            </td>*@
         </tr>
 
     }

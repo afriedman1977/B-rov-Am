@@ -1,0 +1,33 @@
+﻿@using B_Rov_Am.Models;
+@using BRovAm.data;
+@model OrderDetailsViewModel
+
+<h2>OrderDetails for Order Number - @Model.OrderNumber</h2>
+<br />
+
+<h4>Name - @Model.Customer.FirstName @Model.Customer.LastNmae</h4>
+<h4>Address - @Model.Customer.Address</h4>
+<h4>Phone Number - @Model.Customer.PhoneNumber</h4>
+<br />
+
+<table class="table">
+    <tr>
+        <th>Item</th>
+        <th>Description</th>
+        <th>Color</th>
+        <th>Size</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+    @foreach(OrderDetailExpanded od in Model.OrderDetails)
+    {
+        <tr>
+            <td>@od.ItemCode</td>
+            <td>@od.Description</td>
+            <td>@od.Color</td>
+            <td>@od.Size</td>
+            <td>@od.Quantity</td>
+            <td>@od.Price.ToString("C")</td>
+        </tr>
+    }
+</table>

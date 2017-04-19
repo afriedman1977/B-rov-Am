@@ -47,6 +47,9 @@
     <Compile Include="Message.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderDetail.cs" />
+    <Compile Include="OrderDetailExpanded.cs" />
+    <Compile Include="OrdersManager.cs" />
+    <Compile Include="OrderWithCustomer.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="ProductsColors.cs" />
     <Compile Include="ProductsColorsSizes.cs" />

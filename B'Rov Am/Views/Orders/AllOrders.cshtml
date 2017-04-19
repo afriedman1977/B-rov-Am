@@ -1,0 +1,42 @@
+﻿@using B_Rov_Am.Models;
+@using BRovAm.data;
+@model AllOrdersViewModel
+
+<h2>AllOrders</h2>
+<div class="row" style="margin-bottom:10px">
+    <div class="col-md-offset-5">
+        <input type="text" id="search" placeholder="Phone Number" />
+        <button class="btn btn-info" id="clear">Clear</button>
+    </div>
+
+</div>
+
+<table class="table table-bordered table-striped table-hover" id="orders">
+    <tr>
+        <th>Order Number</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone Number</th>
+        <th>Order Date</th>
+        <th>Total Cost</th>
+        <th>Actions</th>
+    </tr>
+    @foreach (OrderWithCustomer owc in Model.Orders)
+    {
+        <tr>
+            <td>@owc.OrderID</td>
+            <td>@owc.FirstName</td>
+            <td>@owc.LastName</td>
+            <td>@owc.PhoneNumber</td>
+            <td>@owc.OrderDate</td>
+            <td>@owc.TotalCost.ToString("C")</td>
+            <td>
+                <a href="/Orders/OrderDetails?orderId=@owc.OrderID&customerId=@owc.CustomerID" class="btn btn-primary">Order Details</a>
+                <a href="/Orders/PrintInvoice?orderId=@owc.OrderID&customerId=@owc.CustomerID" class="btn btn-success">Print</a>
+            </td>
+        </tr>
+    }
+</table>
+@section scripts{
+<script src="~/Scripts/AllOrders.js"></script>
+}
