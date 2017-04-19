@@ -13,8 +13,8 @@ namespace B_Rov_Am.Controllers
     public class ReviewController : TwilioController
     {
         SalesManager manager = new SalesManager(Properties.Settings.Default.constr);
-        private int _index = 0;
-        //Order currentOrder = manager.GetOrder(1);
+        private static int _index;
+       
 
         public ActionResult Index()
         {
@@ -126,18 +126,31 @@ namespace B_Rov_Am.Controllers
             ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
             BRovAmManager manager = new BRovAmManager(Properties.Settings.Default.constr);
             List<OrderDetail> orderDetails = REManager.GetOrderDetailsByOrderId((int)Session["orderId"]).ToList();
-            Session["OrderDetailID"] = orderDetails[_index].OrderDetailID;
-            List<Product> products = manager.GetAllProducts().ToList();
-            Product product = products.Where(p => p.ProductId == orderDetails[_index].ProductID).FirstOrDefault();
-            Color color = manager.GetAllColors().Where(c => c.ColorId == orderDetails[_index].ColorID).FirstOrDefault();
-            Size size = manager.GetAllSizes().Where(s => s.SizeId == orderDetails[_index].SizeID).FirstOrDefault();
-            response.BeginGather(new { action = "/Review/ChooseEdit", numDigits = "1" })
-                .Say("you chose " + orderDetails[_index].Quantity + " " + color.ProductColor + " " + product.Description + " size " + size.ProductSize
-                + " to change the quantity press 1, to change the color press 2, to change the size press 3, to delete this item from your cart "
-                + "press 4, to hear the next item in your cart press 5, to return to the previous menu press 6, to return to "
-                + "the main menu press 7.", new { voice = "alice", language = "en-US" })
-                .EndGather();
-            response.Redirect("/Review/ReviewEntireOrder");
+            if(orderDetails.Count == 0)
+            {
+                response.Say("We could not find any items in this order");
+                response.Redirect("/Review/ReviewOptions");
+            }
+            else if (_index == orderDetails.Count)
+            {
+                response.Say("there are no more items to review");
+                response.Redirect("/Review/ReviewOptions");
+            }
+            else
+            {
+                Session["OrderDetailID"] = orderDetails[_index].OrderDetailID;
+                List<Product> products = manager.GetAllProducts().ToList();
+                Product product = products.Where(p => p.ProductId == orderDetails[_index].ProductID).FirstOrDefault();
+                Color color = manager.GetAllColors().Where(c => c.ColorId == orderDetails[_index].ColorID).FirstOrDefault();
+                Size size = manager.GetAllSizes().Where(s => s.SizeId == orderDetails[_index].SizeID).FirstOrDefault();
+                response.BeginGather(new { action = "/Review/ChooseEdit", numDigits = "1" })
+                    .Say("you chose " + orderDetails[_index].Quantity + " " + color.ProductColor + " " + product.Description + " size " + size.ProductSize
+                    + " to change the quantity press 1, to change the color press 2, to change the size press 3, to delete this item from your cart "
+                    + "press 4, to hear the next item in your cart press 5, to return to the previous menu press 6, to return to "
+                    + "the main menu press 7.", new { voice = "alice", language = "en-US" })
+                    .EndGather();
+                response.Redirect("/Review/ReviewEntireOrder");
+            }
             return TwiML(response);
         }
 
@@ -324,7 +337,7 @@ namespace B_Rov_Am.Controllers
             List<ProductsColorsSizes> pcs = manager.GetAllProductSizeColors().Where(pc => pc.ProductId == od.ProductID && pc.ColorId == od.ColorID && pc.SizeId.ToString() == digits).ToList();
             if (size == null)
             {
-                response.Say("invalid color code, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
+                response.Say("invalid size code, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
                 response.Redirect("/Review/EditSize");
             }
             else if (pcs.Count() == 0)
@@ -381,7 +394,9 @@ namespace B_Rov_Am.Controllers
         {
             var response = new TwilioResponse();
             ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
-            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], int.Parse(digits)).ToList();
+            BRovAmManager BAmanager = new BRovAmManager(Properties.Settings.Default.constr);
+            Product product = BAmanager.GetAllProducts().Where(p => p.ItemCode == digits).FirstOrDefault();
+            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], product.ProductId).ToList();
             if (details == null || details.Count == 0)
             {
                 response.Say("we could not find that item in your order", new { voice = "alice", language = "en-US" });
@@ -406,7 +421,7 @@ namespace B_Rov_Am.Controllers
         {
             var response = new TwilioResponse();
             ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
-            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], int.Parse(digits)).Where(d => d.SizeID == int.Parse(digits)).ToList();
+            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], productCode).Where(d => d.SizeID == int.Parse(digits)).ToList();
             if (details == null || details.Count == 0)
             {
                 response.Say("we could not find that item in that size in your order", new { voice = "alice", language = "en-US" });
@@ -431,7 +446,7 @@ namespace B_Rov_Am.Controllers
         {
             var response = new TwilioResponse();
             ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
-            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], int.Parse(digits)).Where(d => d.SizeID == sizeCode && d.ColorID == int.Parse(digits)).ToList();
+            List<OrderDetail> details = REManager.GetOrderDetailsByItemCode((int)Session["orderId"], productCode).Where(d => d.SizeID == sizeCode && d.ColorID == int.Parse(digits)).ToList();
             if (details == null || details.Count == 0)
             {
                 response.Say("we could not find that item in that size and that color in your order", new { voice = "alice", language = "en-US" });
@@ -535,15 +550,25 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
-                response.Say("Quantity successfully updated.");
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/ReviewOptions");
             }
             else if (digits == "3")
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
-                response.Say("Quantity successfully updated.");
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/EditColor1");
+            }
+                else if(digits == "4")
+            {
+                ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
+                REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
+                response.Redirect("/Review/EditSize1");
             }
             else
             {
@@ -643,12 +668,12 @@ namespace B_Rov_Am.Controllers
             List<ProductsColorsSizes> pcs = manager.GetAllProductSizeColors().Where(pc => pc.ProductId == od.ProductID && pc.ColorId == od.ColorID && pc.SizeId.ToString() == digits).ToList();
             if (size == null)
             {
-                response.Say("invalid color code, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
+                response.Say("invalid size code, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
                 response.Redirect("/Review/EditSize1");
             }
             else if (pcs.Count() == 0)
             {
-                response.Say("Item not available in this color, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
+                response.Say("Item not available in this size, please try again", new { voice = "alice", language = "en-GB", timeout = "100" });
                 response.Redirect("/Review/EditSize1");
             }
             else

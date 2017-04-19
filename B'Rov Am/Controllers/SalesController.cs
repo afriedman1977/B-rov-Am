@@ -26,9 +26,11 @@ namespace B_Rov_Am.Controllers
         {
             var response = new TwilioResponse();
             response.BeginGather(new { action = Url.Action("Menu", "Sales"), numDigits = "1" })
-                .Say("Welcome To the Berov am clothing Hotline. press 1 to start shopping, "
-                + "press 2 to review a previous order, press 3 to hear deadline and pickup location, "
-                + "press 4 to leave a message.", new { voice = "alice", language = "en-GB", timeout = "3" })
+                .Play("/Sound_Files/PracticeTwilio2.wav")
+//C:\Users\pessie\Documents\Visual Studio 2013\Projects\B'Rov Am\B'Rov Am\Sound_Files\PracticeTwilio.wav
+                //.Say("Welcome To the Berov am clothing Hotline. press 1 to start shopping, "
+                //+ "press 2 to review a previous order, press 3 to hear deadline and pickup location, "
+                //+ "press 4 to leave a message.", new { voice = "alice", language = "en-GB", timeout = "3" })
                 .EndGather();
             response.Redirect("/Sales/Welcome");
             return TwiML(response);
@@ -46,6 +48,10 @@ namespace B_Rov_Am.Controllers
             else if (selectedOption == "2")
             {
                 return TwiML(new TwilioResponse().Redirect("/Review/SearchForOrder"));
+            }
+            else if(selectedOption == "4")
+            {
+                return TwiML(new TwilioResponse().Redirect("/Sales/RecordMessage"));
             }
             return TwiML(new TwilioResponse().Say("Invalid choice").Redirect("/Sales/Welcome"));
         }
@@ -177,6 +183,25 @@ namespace B_Rov_Am.Controllers
                 .Say("Please enter an item code.", new { voice = "alice", language = "en-GB", timeout = "100" })
                 .EndGather();
             response.Redirect("/Sales/ChooseItem");
+            return TwiML(response);
+        }
+
+        [HttpPost]
+        public TwiMLResult RecordMessage()
+        {
+            var response = new TwilioResponse();
+            response.Say("Please record your message after the beep. press the pound key when you are done", new { voice = "alice", language = "en-GB", timeout = "100" });
+            response.Record(new { action = "/Sales/SaveMessage", finishOnKey = "#" });
+            return TwiML(response);
+        }
+
+        public TwiMLResult SaveMessage(string From, string RecordingUrl)
+        {
+            var response = new TwilioResponse();
+            SalesManager manager = new SalesManager(Properties.Settings.Default.constr);
+            manager.AddMessageURL(From.Substring(2), RecordingUrl);
+            response.Say("thank you for your message");
+            response.Hangup();
             return TwiML(response);
         }
     }

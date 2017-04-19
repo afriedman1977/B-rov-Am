@@ -154,29 +154,43 @@ namespace BRovAm.data
             }
         }
 
-        public decimal AddQuantityToOrderDetail(int orderId, int qty)
+        public decimal AddQuantityToOrderDetail(int orderdetailId, int qty)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = connection.CreateCommand();
                 command.CommandText = "UPDATE OrderDetails SET Quantity = @qty WHERE OrderDetailID = @oId";
                 command.Parameters.AddWithValue("@qty", qty);
-                command.Parameters.AddWithValue("@oId", orderId);
+                command.Parameters.AddWithValue("@oId", orderdetailId);
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            OrderDetail od = GetOrderDetail(orderId);
-            decimal price = od.Quantity * od.Price;
+            OrderDetail od = GetOrderDetail(orderdetailId);
+            Product product = new BRovAmManager(_connectionString).GetProductById(od.ProductID);
+            decimal price = od.Quantity * product.Price;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = connection.CreateCommand();
                 command.CommandText = "UPDATE OrderDetails SET Price = @pr WHERE OrderDetailID = @oId";
                 command.Parameters.AddWithValue("@pr", price);
-                command.Parameters.AddWithValue("@oId", orderId);
+                command.Parameters.AddWithValue("@oId", orderdetailId);
                 connection.Open();
                 command.ExecuteNonQuery();
             }
             return price;
+        }
+
+        public void AddMessageURL(string phoneNumber, string url)
+        {
+             using (SqlConnection connection = new SqlConnection(_connectionString))
+             {
+                 SqlCommand command = connection.CreateCommand();
+                 command.CommandText = "INSERT INTO Messages(PhoneNumber,MessageURL) VALUES (@phNum,@url)";
+                 command.Parameters.AddWithValue("@phNum", phoneNumber);
+                 command.Parameters.AddWithValue("@url", url);
+                 connection.Open();
+                 command.ExecuteNonQuery();
+             }
         }
     }
 }

@@ -203,9 +203,9 @@ namespace B_Rov_Am.Controllers
         public TwiMLResult ConfirmQuantity(string qty, string digits)
         {
             var response = new TwilioResponse();
-            if (digits != "1" || digits != "2")
+            if (digits != "1" && digits != "2")
             {
-                response.Say("inavlid choice", new { voice = "alice", language = "en-US" });
+                response.Say("invalid choice", new { voice = "alice", language = "en-US" });
                 response.Redirect("/Items/VerifyQuantity?digits=" + qty);
             }
             else if (digits == "2")
@@ -228,7 +228,7 @@ namespace B_Rov_Am.Controllers
         public TwiMLResult ConfirmOrderDetail(string digits)
         {
             var response = new TwilioResponse();
-            if (digits != "1" || digits != "2")
+            if (digits != "1" && digits != "2")
             {
                 response.BeginGather(new { action = "/Items/ConfirmOrderDetail", numDigits = "1" })
                    .Say("To add another item press 1, to checkout press 2", new { voice = "alice", language = "en-US" })

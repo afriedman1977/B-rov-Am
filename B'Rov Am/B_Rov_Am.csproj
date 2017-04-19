@@ -238,6 +238,11 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\SalesIndex.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Sound_Files\01.wma" />
+    <Content Include="Sound_Files\PracticeTwilio.wav" />
+    <Content Include="Sound_Files\PracticeTwilio2.wav" />
+    <Content Include="Sound_Files\Rechnitz.mp3" />
+    <Content Include="Sound_Files\Kalimba.mp3" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

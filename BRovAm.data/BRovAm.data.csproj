@@ -44,6 +44,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="ColorSizeQuantity.cs" />
     <Compile Include="Customer.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderDetail.cs" />
     <Compile Include="Product.cs" />
