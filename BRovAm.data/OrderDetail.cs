@@ -14,6 +14,7 @@ namespace BRovAm.data
         public int ColorID { get; set; }
         public int SizeID { get; set; }
         public int Quantity { get; set; }
-        public Decimal Price { get; set; }
+        public decimal Price { get; set; }
+        public decimal? AmountPaid { get; set; }
     }
 }

@@ -15,6 +15,46 @@ namespace BRovAm.data
             _connectionString = connectionString;
         }
 
+        public void SignUp(Administrator admin)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO Administrator(UserName,PasswordHash,PasswordSalt) VALUES(@userName,@hash,@salt)";
+                command.Parameters.AddWithValue("@userName", admin.UserName);
+                command.Parameters.AddWithValue("@hash", admin.PasswordHash);
+                command.Parameters.AddWithValue("@salt", admin.PasswordSalt);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public Administrator Signin(string userName, string password)
+        {
+            Administrator admin = new Administrator();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT * FROM Administrator WHERE UserName = @userName";
+                command.Parameters.AddWithValue("@userName", userName);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    admin.Id = (int)reader["Id"];
+                    admin.UserName = (string)reader["UserName"];
+                    admin.PasswordHash = (string)reader["PasswordHash"];
+                    admin.PasswordSalt = (string)reader["PasswordSalt"];
+                    if (!PasswordHelper.PasswordMatch(password, admin.PasswordSalt, admin.PasswordHash))
+                    {
+                        return null;
+                    }
+                    return admin;
+                }
+            }
+            return null;
+        }
+
         public IEnumerable<Product> GetAllProducts()
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -242,12 +282,12 @@ namespace BRovAm.data
                     {
                         if (CountOfProductColorSize(p) != 0)
                         {
-                            command.CommandText = "UPDATE ProductsColorsSizes SET STOCK = @quantity WHERE ProductId = @pId AND ColorId = @cId AND SizeId = @sId";                            
+                            command.CommandText = "UPDATE ProductsColorsSizes SET STOCK = @quantity WHERE ProductId = @pId AND ColorId = @cId AND SizeId = @sId";
                         }
                         else
                         {
                             command.CommandText = "INSERT INTO ProductsColorsSizes(ProductId,ColorId,SizeId,Stock) "
-                                 + "VALUES(@pId,@cId,@sId,@quantity)"; 
+                                 + "VALUES(@pId,@cId,@sId,@quantity)";
                         }
                     }
                     else
@@ -298,7 +338,7 @@ namespace BRovAm.data
                 command.Parameters.AddWithValue("@id", id);
                 connection.Open();
                 command.ExecuteNonQuery();
-            } 
+            }
         }
 
         public IEnumerable<ProductsColorsSizes> GetColorsAndSizesForProduct(int id)
@@ -333,11 +373,11 @@ namespace BRovAm.data
                 SqlCommand command = connection.CreateCommand();
                 command.CommandText = "SELECT c.Color,s.Size,cs.Stock FROM Colors c JOIN ProductsColorsSizes cs ON cs.ColorId = c.ColorId"
                     + " JOIN Sizes s  ON s.SizeId = cs.SizeId WHERE cs.ProductId = @id";
-                command.Parameters.AddWithValue("@id", id); 
+                command.Parameters.AddWithValue("@id", id);
                 connection.Open();
                 List<ColorSizeQuantity> csq = new List<ColorSizeQuantity>();
                 SqlDataReader reader = command.ExecuteReader();
-                while(reader.Read())
+                while (reader.Read())
                 {
                     csq.Add(new ColorSizeQuantity
                     {
@@ -347,7 +387,7 @@ namespace BRovAm.data
                     });
                 }
                 return csq;
-            } 
+            }
         }
 
         private int CountOfProductColorSize(ProductsColorsSizes p)

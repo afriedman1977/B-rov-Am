@@ -2,7 +2,7 @@
 @using BRovAm.data;
 @model OrderDetailsViewModel
 
-<h2>OrderDetails for Order Number - @Model.OrderNumber</h2>
+<h2>OrderDetails for Order Number - @Model.Order.OrderID</h2>
 <br />
 
 <h4>Name - @Model.Customer.FirstName @Model.Customer.LastNmae</h4>
@@ -31,3 +31,6 @@
         </tr>
     }
 </table>
+
+<h4 style="text-align:right">Total Items = @Model.Order.TotalQuantity</h4>
+<h4 style="text-align:right">Total Cost = @Model.Order.TotalCost.ToString("C")</h4>

@@ -215,7 +215,7 @@ namespace B_Rov_Am.Controllers
             else
             {
                 SalesManager manager = new SalesManager(Properties.Settings.Default.constr);
-                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], int.Parse(qty));
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], int.Parse(qty), (int)Session["orderId"]);
                 response.BeginGather(new { action = "/Items/ConfirmOrderDetail", numDigits = "1" })
                     .Say("Your total cost for this item is " + price + " dollars. To add another item press 1, to checkout press 2", new { voice = "alice", language = "en-US" })
                     .EndGather();

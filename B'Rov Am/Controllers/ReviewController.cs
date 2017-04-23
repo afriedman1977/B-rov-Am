@@ -227,6 +227,8 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 _index++;
                 response.Redirect("/Review/ReviewEntireOrder");
             }
@@ -234,12 +236,16 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/EditColor");
             }
             else if (digits == "4")
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
+                response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/EditSize");
             }
             else
@@ -550,7 +556,7 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
-                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
                 response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/ReviewOptions");
             }
@@ -558,7 +564,7 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
-                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
                 response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/EditColor1");
             }
@@ -566,7 +572,7 @@ namespace B_Rov_Am.Controllers
             {
                 ReviewEditManager REManager = new ReviewEditManager(Properties.Settings.Default.constr);
                 REManager.UpdateQuantity(qty, (int)Session["OrderDetailID"]);
-                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty);
+                decimal price = manager.AddQuantityToOrderDetail((int)Session["orderDetailId"], qty, (int)Session["orderId"]);
                 response.Say("Quantity successfully updated. your updated price for this item is " + price + " dollars.");
                 response.Redirect("/Review/EditSize1");
             }

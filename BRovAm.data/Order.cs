@@ -11,6 +11,8 @@ namespace BRovAm.data
         public int OrderID { get; set; }
         public int CustomerID { get; set; }
         public DateTime OrderDate { get; set; }
-        public Decimal TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
+        public decimal? TotalAmountPaid { get; set; }
+        public int? TotalQuantity { get; set; }
     }
 }

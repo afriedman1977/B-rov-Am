@@ -48,7 +48,7 @@ namespace BRovAm.data
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT od.OrderDetailID, od.OrderID, p.ItemCode, p.Description, c.Color, s.Size, od.Quantity, od.Price "
+                command.CommandText = "SELECT od.OrderDetailID, od.OrderID, p.ItemCode, p.Description, p.Price, c.Color, s.Size, od.Quantity, od.Price as TotalPrice "
                 + "FROM OrderDetails od JOIN Products p ON od.ProductID = p.ProductId JOIN Colors c ON  od.ColorID = c.ColorId JOIN Sizes s ON od.SizeID = s.SizeId "
                 + "WHERE OrderID = @oId";
                 command.Parameters.AddWithValue("@oId", id);
@@ -66,7 +66,8 @@ namespace BRovAm.data
                         Color = (string)reader["Color"],
                         Price = (decimal)reader["Price"],
                         Size = (string)reader["Size"],
-                        Quantity = (int)reader["Quantity"]
+                        Quantity = (int)reader["Quantity"],
+                        TotalPrice = (decimal)reader["TotalPrice"]
                     });
                 }
                 return orderDetails;

@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administrator.cs" />
     <Compile Include="BRovAmManager.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Color.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="OrderDetailExpanded.cs" />
     <Compile Include="OrdersManager.cs" />
     <Compile Include="OrderWithCustomer.cs" />
+    <Compile Include="PasswordHelper.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="ProductsColors.cs" />
     <Compile Include="ProductsColorsSizes.cs" />

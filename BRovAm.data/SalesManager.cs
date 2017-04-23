@@ -59,11 +59,13 @@ namespace BRovAm.data
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO Orders(CustomerID,OrderDate,TotalCost) "
-                    + "VALUES(@custId,@date,@cost);SELECT @@IDENTITY";
+                command.CommandText = "INSERT INTO Orders(CustomerID,OrderDate,TotalCost,TotalAmountPaid,TotalQuantity) "
+                    + "VALUES(@custId,@date,@cost,@paid,@quantity);SELECT @@IDENTITY";
                 command.Parameters.AddWithValue("@custId", customerID);
                 command.Parameters.AddWithValue("@date", DateTime.Now);
                 command.Parameters.AddWithValue("@cost", 0);
+                command.Parameters.AddWithValue("@paid", 0);
+                command.Parameters.AddWithValue("@quantity", 0);
                 connection.Open();
                 return (int)(decimal)command.ExecuteScalar();
             }
@@ -84,7 +86,9 @@ namespace BRovAm.data
                     OrderID = (int)reader["OrderID"],
                     CustomerID = (int)reader["CustomerID"],
                     OrderDate = (DateTime)reader["OrderDate"],
-                    TotalCost = (decimal)reader["TotalCost"]
+                    TotalCost = (decimal)reader["TotalCost"],
+                    TotalAmountPaid = (decimal?)reader["TotalAmountPaid"],
+                    TotalQuantity = (int?)reader["TotalQuantity"]
                 };
             }
         }
@@ -114,6 +118,7 @@ namespace BRovAm.data
 
         public int CreateOrderDetail(int orderId, int productId, decimal price)
         {
+            int id = 0;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = connection.CreateCommand();
@@ -124,8 +129,11 @@ namespace BRovAm.data
                 command.Parameters.AddWithValue("@qty", 1);
                 command.Parameters.AddWithValue("@price", price);
                 connection.Open();
-                return (int)(decimal)command.ExecuteScalar();
+                id = (int)(decimal)command.ExecuteScalar();
             }
+            UpdateTotalCost(orderId);
+            UpdateTotalQuantity(orderId);
+            return id;
         }
 
         public void AddSizeToOrderDetail(int orderId, int sizeId)
@@ -154,7 +162,7 @@ namespace BRovAm.data
             }
         }
 
-        public decimal AddQuantityToOrderDetail(int orderdetailId, int qty)
+        public decimal AddQuantityToOrderDetail(int orderdetailId, int qty, int orderId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -177,6 +185,8 @@ namespace BRovAm.data
                 connection.Open();
                 command.ExecuteNonQuery();
             }
+            UpdateTotalCost(orderId);
+            UpdateTotalQuantity(orderId);
             return price;
         }
 
@@ -191,6 +201,48 @@ namespace BRovAm.data
                  connection.Open();
                  command.ExecuteNonQuery();
              }
+        }
+
+        private void UpdateTotalCost(int orderId)
+        {
+            decimal price = 0;
+            using(SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT SUM(Price) FROM OrderDetails WHERE OrderID = @oId";
+                command.Parameters.AddWithValue("@oId", orderId);
+                connection.Open();
+                price = (decimal)command.ExecuteScalar();
+            }
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE Orders SET TotalCost = @price";
+                command.Parameters.AddWithValue("@price", price);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void UpdateTotalQuantity(int orderId)
+        {
+            int quantity = 0;
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT SUM(Quantity) FROM OrderDetails WHERE OrderID = @oId";
+                command.Parameters.AddWithValue("@oId", orderId);
+                connection.Open();
+                quantity = (int)command.ExecuteScalar();
+            }
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE Orders SET TotalQuantity = @quantity";
+                command.Parameters.AddWithValue("@quantity", quantity);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

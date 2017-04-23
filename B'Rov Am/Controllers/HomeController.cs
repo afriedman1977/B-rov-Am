@@ -9,6 +9,7 @@ using System.Speech.Synthesis;
 
 namespace B_Rov_Am.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         //

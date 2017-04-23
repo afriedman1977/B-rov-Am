@@ -10,6 +10,6 @@ namespace B_Rov_Am.Models
     {
         public IEnumerable<OrderDetailExpanded> OrderDetails { get; set; }
         public Customer Customer { get; set; }
-        public int OrderNumber { get; set; }
+        public Order Order { get; set; }
     }
 }

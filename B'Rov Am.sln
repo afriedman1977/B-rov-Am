@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "B_Rov_Am", "B'Rov Am\B_Rov_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BRovAm.data", "BRovAm.data\BRovAm.data.csproj", "{4B302B44-47FA-4ADF-9817-77B5040EECC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateAdministrator", "CreateAdministrator\CreateAdministrator.csproj", "{5EC4B350-BAE3-45AD-B339-8A0585A0DC47}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B302B44-47FA-4ADF-9817-77B5040EECC5} = {4B302B44-47FA-4ADF-9817-77B5040EECC5}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +26,10 @@ Global
 		{4B302B44-47FA-4ADF-9817-77B5040EECC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B302B44-47FA-4ADF-9817-77B5040EECC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B302B44-47FA-4ADF-9817-77B5040EECC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC4B350-BAE3-45AD-B339-8A0585A0DC47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC4B350-BAE3-45AD-B339-8A0585A0DC47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC4B350-BAE3-45AD-B339-8A0585A0DC47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC4B350-BAE3-45AD-B339-8A0585A0DC47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
